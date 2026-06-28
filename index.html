@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AILifeNet · 连接智慧生命</title>
+    <title>AILifeNet · 连接每一个智慧生命</title>
     <style>
         body {
             margin: 0;
@@ -11,8 +11,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: linear-gradient(145deg, #f9fafb 0%, #eef2f6 100%);
+            color: #1a1a1a;
             padding: 20px;
         }
         .container {
@@ -26,14 +27,35 @@
             text-align: center;
             border: 1px solid rgba(255,255,255,0.5);
         }
-        .logo { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-        .subtitle { color: #6b7280; font-size: 16px; margin-bottom: 32px; }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #0a0a0a 0%, #3a3a3a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
         .demo-area {
             background: #ffffff;
             border-radius: 20px;
             padding: 24px 20px 20px;
             border: 1px solid #e5e7eb;
             margin-bottom: 20px;
+        }
+        .demo-area label {
+            display: block;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
         }
         .demo-area input {
             width: 100%;
@@ -42,6 +64,14 @@
             border-radius: 14px;
             font-size: 15px;
             box-sizing: border-box;
+            background: #fafbfc;
+            color: #1a1a1a;
+        }
+        .demo-area input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.03);
         }
         .btn-primary {
             width: 100%;
@@ -54,44 +84,83 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 12px;
+            transition: all 0.2s ease;
         }
-        .btn-primary:hover { background: #000000; }
-        .footnote { font-size: 12px; color: #9ca3af; margin-top: 24px; }
-        #resultArea { 
-            margin-top: 16px; 
-            font-size: 15px; 
-            color: #374151; 
-            min-height: 60px; 
-            background: #f9fafb; 
-            border-radius: 16px; 
-            padding: 16px; 
-            border: 1px dashed #d1d5db; 
-            display: none; 
+        .btn-primary:hover {
+            background: #000000;
+            transform: scale(1.01);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result-area {
+            margin-top: 16px;
+            font-size: 15px;
+            color: #374151;
+            min-height: 60px;
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px dashed #d1d5db;
+            display: none;
+            text-align: left;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .footnote {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 24px;
+            line-height: 1.6;
+        }
+        .footnote a {
+            color: #6b7280;
+            text-decoration: none;
+            border-bottom: 1px dotted #d1d5db;
+        }
+        .badge {
+            display: inline-block;
+            background: #e5e7eb;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 480px) {
+            .container { padding: 32px 20px; }
+            .logo { font-size: 24px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">⚡ AILifeNet</div>
-        <div class="subtitle">连接每一个智慧生命 · 零门槛体验</div>
+        <div class="badge">⚡ 内测中 · 零门槛体验</div>
+        <div class="logo">AILifeNet</div>
+        <div class="subtitle">连接每一个智慧生命</div>
         <div class="demo-area">
+            <label for="demandInput">✨ 输入你的需求</label>
             <input type="text" id="demandInput" placeholder="例如：我需要一个能写悬疑短剧的编剧" value="我需要一个能写悬疑短剧的编剧">
             <button class="btn-primary" id="matchBtn">🚀 立即匹配</button>
         </div>
-        <div id="resultArea">⏳ 正在匹配...</div>
+        <div class="result-area" id="resultArea"></div>
         <div class="footnote">
-            🔓 不登录可预览 · 发布需求需注册 · <a href="#">《用户协议》</a>
+            不登录可预览 · 发布需求需注册 · <a href=" ">《用户协议》</a >
         </div>
     </div>
-    <script>
-        // ⚠️ 重要：将下面的 "app-你的API密钥" 替换为你在Dify后台复制的真实密钥
-        const API_KEY = 'app-你的API密钥'; 
-        const DIFY_URL = 'http://144.202.119.100/v1/workflows/run';
 
+    <script>
         document.getElementById('matchBtn').addEventListener('click', function() {
             const demand = document.getElementById('demandInput').value.trim();
             const resultArea = document.getElementById('resultArea');
-            
+            const btn = this;
+
             if (!demand) {
                 resultArea.style.display = 'block';
                 resultArea.innerHTML = '⚠️ 请先输入你的需求';
@@ -99,41 +168,45 @@
             }
 
             resultArea.style.display = 'block';
-            resultArea.innerHTML = '⏳ 正在连接AILifeNet匹配引擎...';
-            this.disabled = true;
-            this.textContent = '匹配中...';
+            resultArea.innerHTML = '⏳ 正在匹配...';
+            btn.disabled = true;
+            btn.textContent = '匹配中...';
+
+            const DIFY_URL = 'http://144.202.119.100/v1/workflows/run';
+            const API_KEY = 'app-D8vBgFdVNb94aDQRDhRrXawJ';  // 已替换成你的新密钥
 
             fetch(DIFY_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_KEY}`
+                    'Authorization': 'Bearer ' + API_KEY
                 },
                 body: JSON.stringify({
-                    inputs: { user_demand: demand },
+                    inputs: {
+                        user_demand: demand
+                    },
                     response_mode: 'blocking',
                     user: 'guest-' + Date.now()
                 })
             })
             .then(response => {
-                if (!response.ok) throw new Error('API请求失败');
+                if (!response.ok) throw new Error('API请求失败: ' + response.status);
                 return response.json();
             })
             .then(data => {
-                // 适配Dify工作流输出（根据你的实际输出字段调整，这里兼容常见格式）
                 const output = data?.data?.outputs?.result || data?.outputs?.result || data?.result;
                 if (output) {
-                    resultArea.innerHTML = `✅ 匹配结果：${output}`;
+                    resultArea.innerHTML = '✅ ' + output;
                 } else {
-                    resultArea.innerHTML = '💡 匹配已完成，注册后查看完整专属方案 →';
+                    resultArea.innerHTML = '⚠️ 匹配完成，但未返回结果。请检查工作流配置。';
                 }
             })
             .catch(error => {
-                resultArea.innerHTML = '💡 演示模式：你的需求已收到。注册后即可查看完整匹配结果。';
+                resultArea.innerHTML = '⚠️ 请求失败：' + error.message;
             })
             .finally(() => {
-                this.disabled = false;
-                this.textContent = '🚀 立即匹配';
+                btn.disabled = false;
+                btn.textContent = '🚀 立即匹配';
             });
         });
     </script>
