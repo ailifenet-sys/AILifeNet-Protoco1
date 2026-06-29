@@ -57,7 +57,6 @@
             margin-bottom: 28px;
             font-weight: 400;
         }
-        /* 数字人占位区 */
         #digitalHumanContainer {
             width: 120px;
             height: 120px;
@@ -189,7 +188,6 @@
             text-decoration: none;
             border-bottom: 1px dotted #d1d5db;
         }
-        /* 加载状态 */
         .spinner {
             display: inline-block;
             width: 18px;
@@ -221,7 +219,6 @@
         <div class="logo">AILifeNet</div>
         <div class="subtitle">连接每一个智慧生命</div>
 
-        <!-- 数字人占位区（后续集成FAY） -->
         <div id="digitalHumanContainer">
             <span class="placeholder-text">🤖<br>数字人<br>待集成</span>
         </div>
@@ -244,7 +241,7 @@
     <script>
         // ==================== 配置 ====================
         const DIFY_URL = 'http://144.202.119.100/v1/workflows/run';
-        const API_KEY = 'app-1wwgd9U4Mgbtkl7jNDa8zgrO';  // ✅ 已更新
+        const API_KEY = 'app-1wwgd9U4Mgbtkl7jNDa8zgr0';  // ✅ 从Dify后台复制的准确密钥
 
         // ==================== DOM元素 ====================
         const demandInput = document.getElementById('demandInput');
@@ -252,11 +249,10 @@
         const resultArea = document.getElementById('resultArea');
         const voiceBtn = document.getElementById('voiceBtn');
 
-        // ==================== 语音识别（免费，浏览器自带） ====================
+        // ==================== 语音识别 ====================
         let recognition = null;
         let isListening = false;
 
-        // 检查浏览器是否支持语音识别
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (SpeechRecognition) {
@@ -275,13 +271,11 @@
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
                 demandInput.value = transcript;
-                // 触发输入事件，方便其他逻辑
                 demandInput.dispatchEvent(new Event('input'));
             };
 
             recognition.onerror = function(event) {
                 console.warn('语音识别错误:', event.error);
-                // 如果是 'not-allowed' 表示用户拒绝权限，不弹窗
                 if (event.error !== 'not-allowed') {
                     resultArea.style.display = 'block';
                     resultArea.innerHTML = '⚠️ 语音识别失败，请手动输入。';
@@ -295,11 +289,10 @@
                 voiceBtn.title = '点击说话输入需求';
             };
         } else {
-            // 浏览器不支持语音识别，隐藏按钮
             voiceBtn.style.display = 'none';
         }
 
-        // ==================== 语音按钮点击事件 ====================
+        // ==================== 语音按钮 ====================
         voiceBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             if (!recognition) {
@@ -313,7 +306,6 @@
             try {
                 recognition.start();
             } catch (err) {
-                // 如果已经在运行，先停止再重新开始
                 try { recognition.stop(); } catch(e) {}
                 setTimeout(() => {
                     try { recognition.start(); } catch(e) {}
@@ -332,13 +324,11 @@
                 return;
             }
 
-            // 显示加载状态
             resultArea.style.display = 'block';
             resultArea.innerHTML = '<span class="spinner"></span> 正在匹配...';
             btn.disabled = true;
             btn.textContent = '⏳ 匹配中...';
 
-            // 调用Dify工作流
             fetch(DIFY_URL, {
                 method: 'POST',
                 headers: {
@@ -358,7 +348,6 @@
                 return response.json();
             })
             .then(data => {
-                // 适配多种输出格式
                 const output = data?.data?.outputs?.result || data?.outputs?.result || data?.result;
                 if (output) {
                     resultArea.innerHTML = '✅ ' + output;
@@ -375,15 +364,14 @@
             });
         });
 
-        // ==================== 按回车键触发匹配 ====================
+        // ==================== 回车触发匹配 ====================
         demandInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 matchBtn.click();
             }
         });
 
-        // ==================== 数字人占位交互（演示效果） ====================
-        // 当用户开始输入时，数字人区域有反馈
+        // ==================== 数字人交互反馈 ====================
         demandInput.addEventListener('focus', function() {
             document.getElementById('digitalHumanContainer').classList.add('active');
         });
