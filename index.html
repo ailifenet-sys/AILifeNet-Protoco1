@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AILifeNet · 连接每一个智慧生命</title>
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,56 +26,115 @@
             padding: 48px 40px;
             border-radius: 32px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-            max-width: 560px;
+            max-width: 600px;
             width: 100%;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.5);
+            position: relative;
+        }
+        .badge {
+            display: inline-block;
+            background: #e5e7eb;
+            padding: 4px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 16px;
         }
         .logo {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             letter-spacing: -0.02em;
             background: linear-gradient(135deg, #0a0a0a 0%, #3a3a3a 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         .subtitle {
             color: #6b7280;
             font-size: 16px;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
             font-weight: 400;
+        }
+        /* 数字人占位区 */
+        #digitalHumanContainer {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #6b7280;
+            border: 3px dashed #9ca3af;
+            transition: all 0.3s ease;
+        }
+        #digitalHumanContainer.active {
+            border-color: #1a1a1a;
+            background: linear-gradient(135deg, #e5e7eb 0%, #b0b8c4 100%);
+            box-shadow: 0 0 30px rgba(0,0,0,0.05);
+        }
+        #digitalHumanContainer .placeholder-text {
+            font-size: 12px;
+            color: #9ca3af;
+            text-align: center;
+            line-height: 1.3;
         }
         .demo-area {
             background: #ffffff;
             border-radius: 20px;
             padding: 24px 20px 20px;
             border: 1px solid #e5e7eb;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
-        .demo-area label {
-            display: block;
-            text-align: left;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 8px;
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        .demo-area input {
-            width: 100%;
+        .input-group input {
+            flex: 1;
             padding: 14px 16px;
             border: 1.5px solid #e5e7eb;
             border-radius: 14px;
             font-size: 15px;
-            box-sizing: border-box;
             background: #fafbfc;
             color: #1a1a1a;
-        }
-        .demo-area input:focus {
+            transition: all 0.2s;
             outline: none;
+        }
+        .input-group input:focus {
             border-color: #1a1a1a;
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(0,0,0,0.03);
+        }
+        .voice-btn {
+            padding: 14px 18px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 14px;
+            background: #fafbfc;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            color: #6b7280;
+        }
+        .voice-btn:hover {
+            background: #f3f4f6;
+            border-color: #1a1a1a;
+        }
+        .voice-btn.listening {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         .btn-primary {
             width: 100%;
@@ -112,10 +175,13 @@
             max-height: 400px;
             overflow-y: auto;
         }
+        .result-area.show {
+            display: block;
+        }
         .footnote {
             font-size: 12px;
             color: #9ca3af;
-            margin-top: 24px;
+            margin-top: 20px;
             line-height: 1.6;
         }
         .footnote a {
@@ -123,19 +189,29 @@
             text-decoration: none;
             border-bottom: 1px dotted #d1d5db;
         }
-        .badge {
+        /* 加载状态 */
+        .spinner {
             display: inline-block;
-            background: #e5e7eb;
-            padding: 4px 12px;
-            border-radius: 100px;
-            font-size: 12px;
-            font-weight: 500;
-            color: #4b5563;
-            margin-bottom: 16px;
+            width: 18px;
+            height: 18px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #1a1a1a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         @media (max-width: 480px) {
-            .container { padding: 32px 20px; }
-            .logo { font-size: 24px; }
+            .container { padding: 28px 16px; }
+            .logo { font-size: 26px; }
+            .input-group { flex-wrap: wrap; }
+            .input-group input { flex: 1 1 100%; }
+            .voice-btn { flex: 0 0 auto; }
+            #digitalHumanContainer { width: 80px; height: 80px; font-size: 32px; }
         }
     </style>
 </head>
@@ -144,21 +220,110 @@
         <div class="badge">⚡ 内测中 · 零门槛体验</div>
         <div class="logo">AILifeNet</div>
         <div class="subtitle">连接每一个智慧生命</div>
+
+        <!-- 数字人占位区（后续集成FAY） -->
+        <div id="digitalHumanContainer">
+            <span class="placeholder-text">🤖<br>数字人<br>待集成</span>
+        </div>
+
         <div class="demo-area">
-            <label for="demandInput">✨ 输入你的需求</label>
-            <input type="text" id="demandInput" placeholder="例如：我需要一个能写悬疑短剧的编剧" value="我需要一个能写悬疑短剧的编剧">
+            <div class="input-group">
+                <input type="text" id="demandInput" placeholder="例如：我需要一个能写悬疑短剧的编剧">
+                <button class="voice-btn" id="voiceBtn" title="点击说话输入需求">🎤</button>
+            </div>
             <button class="btn-primary" id="matchBtn">🚀 立即匹配</button>
         </div>
+
         <div class="result-area" id="resultArea"></div>
+
         <div class="footnote">
-            不登录可预览 · 发布需求需注册 · <a href=" ">《用户协议》</a >
+            💡 不登录可预览 · 发布需求需注册 · <a href="#">《用户协议》</a>
         </div>
     </div>
 
     <script>
-        document.getElementById('matchBtn').addEventListener('click', function() {
-            const demand = document.getElementById('demandInput').value.trim();
-            const resultArea = document.getElementById('resultArea');
+        // ==================== 配置 ====================
+        const DIFY_URL = 'http://144.202.119.100/v1/workflows/run';
+        const API_KEY = 'app-1wwgd9U4Mgbtkl7jNDa8zgrO';  // ✅ 已更新
+
+        // ==================== DOM元素 ====================
+        const demandInput = document.getElementById('demandInput');
+        const matchBtn = document.getElementById('matchBtn');
+        const resultArea = document.getElementById('resultArea');
+        const voiceBtn = document.getElementById('voiceBtn');
+
+        // ==================== 语音识别（免费，浏览器自带） ====================
+        let recognition = null;
+        let isListening = false;
+
+        // 检查浏览器是否支持语音识别
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                isListening = true;
+                voiceBtn.classList.add('listening');
+                voiceBtn.textContent = '🔴';
+                voiceBtn.title = '正在听...';
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                demandInput.value = transcript;
+                // 触发输入事件，方便其他逻辑
+                demandInput.dispatchEvent(new Event('input'));
+            };
+
+            recognition.onerror = function(event) {
+                console.warn('语音识别错误:', event.error);
+                // 如果是 'not-allowed' 表示用户拒绝权限，不弹窗
+                if (event.error !== 'not-allowed') {
+                    resultArea.style.display = 'block';
+                    resultArea.innerHTML = '⚠️ 语音识别失败，请手动输入。';
+                }
+            };
+
+            recognition.onend = function() {
+                isListening = false;
+                voiceBtn.classList.remove('listening');
+                voiceBtn.textContent = '🎤';
+                voiceBtn.title = '点击说话输入需求';
+            };
+        } else {
+            // 浏览器不支持语音识别，隐藏按钮
+            voiceBtn.style.display = 'none';
+        }
+
+        // ==================== 语音按钮点击事件 ====================
+        voiceBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!recognition) {
+                alert('您的浏览器不支持语音识别，请手动输入。');
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+            try {
+                recognition.start();
+            } catch (err) {
+                // 如果已经在运行，先停止再重新开始
+                try { recognition.stop(); } catch(e) {}
+                setTimeout(() => {
+                    try { recognition.start(); } catch(e) {}
+                }, 300);
+            }
+        });
+
+        // ==================== 匹配功能 ====================
+        matchBtn.addEventListener('click', function() {
+            const demand = demandInput.value.trim();
             const btn = this;
 
             if (!demand) {
@@ -167,14 +332,13 @@
                 return;
             }
 
+            // 显示加载状态
             resultArea.style.display = 'block';
-            resultArea.innerHTML = '⏳ 正在匹配...';
+            resultArea.innerHTML = '<span class="spinner"></span> 正在匹配...';
             btn.disabled = true;
-            btn.textContent = '匹配中...';
+            btn.textContent = '⏳ 匹配中...';
 
-            const DIFY_URL = 'http://144.202.119.100/v1/workflows/run';
-            const API_KEY = 'app-D8vBgFdVNb94aDQRDhRrXawJ';  // 已替换成你的新密钥
-
+            // 调用Dify工作流
             fetch(DIFY_URL, {
                 method: 'POST',
                 headers: {
@@ -194,6 +358,7 @@
                 return response.json();
             })
             .then(data => {
+                // 适配多种输出格式
                 const output = data?.data?.outputs?.result || data?.outputs?.result || data?.result;
                 if (output) {
                     resultArea.innerHTML = '✅ ' + output;
@@ -209,6 +374,26 @@
                 btn.textContent = '🚀 立即匹配';
             });
         });
+
+        // ==================== 按回车键触发匹配 ====================
+        demandInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                matchBtn.click();
+            }
+        });
+
+        // ==================== 数字人占位交互（演示效果） ====================
+        // 当用户开始输入时，数字人区域有反馈
+        demandInput.addEventListener('focus', function() {
+            document.getElementById('digitalHumanContainer').classList.add('active');
+        });
+        demandInput.addEventListener('blur', function() {
+            document.getElementById('digitalHumanContainer').classList.remove('active');
+        });
+
+        console.log('✅ AILifeNet 零门槛入口已加载');
+        console.log('📍 API地址:', DIFY_URL);
+        console.log('🔑 API密钥:', API_KEY ? '已配置' : '未配置');
     </script>
 </body>
 </html>
