@@ -32,6 +32,35 @@
             border: 1px solid rgba(255,255,255,0.5);
             position: relative;
         }
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .navbar a {
+            text-decoration: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .navbar .btn-login {
+            color: #1a1a1a;
+            border: 1px solid #d1d5db;
+            background: #fafbfc;
+        }
+        .navbar .btn-login:hover {
+            background: #f3f4f6;
+        }
+        .navbar .btn-register {
+            color: #ffffff;
+            background: #1a1a1a;
+        }
+        .navbar .btn-register:hover {
+            background: #000000;
+        }
         .badge {
             display: inline-block;
             background: #e5e7eb;
@@ -210,22 +239,31 @@
             .input-group input { flex: 1 1 100%; }
             .voice-btn { flex: 0 0 auto; }
             #digitalHumanContainer { width: 80px; height: 80px; font-size: 32px; }
+            .navbar { font-size: 12px; gap: 8px; }
+            .navbar a { padding: 4px 12px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 导航栏（登录/注册入口） -->
+        <div class="navbar">
+            <a href="http://144.202.119.100/signin" class="btn-login">登录</a>
+            <a href="http://144.202.119.100/signup" class="btn-register">注册</a>
+        </div>
+
         <div class="badge">⚡ 内测中 · 零门槛体验</div>
         <div class="logo">AILifeNet</div>
         <div class="subtitle">连接每一个智慧生命</div>
 
+        <!-- 数字人占位区 -->
         <div id="digitalHumanContainer">
             <span class="placeholder-text">🤖<br>数字人<br>待集成</span>
         </div>
 
         <div class="demo-area">
             <div class="input-group">
-                <input type="text" id="demandInput" placeholder="例如：我需要一个能写悬疑短剧的编剧">
+                <input type="text" id="demandInput" placeholder="例如：我需要一个能写悬疑短剧的编剧" value="我需要一个能写悬疑短剧的编剧">
                 <button class="voice-btn" id="voiceBtn" title="点击说话输入需求">🎤</button>
             </div>
             <button class="btn-primary" id="matchBtn">🚀 立即匹配</button>
@@ -241,7 +279,7 @@
     <script>
         // ==================== 配置 ====================
         const DIFY_URL = 'http://144.202.119.100/v1/workflows/run';
-        const API_KEY = 'app-1wwgd9U4Mgbtkl7jNDa8zgr0';  // ✅ 从Dify后台复制的准确密钥
+        const API_KEY = 'app-1wwgd9U4Mgbtkl7jNDa8zgr0';
 
         // ==================== DOM元素 ====================
         const demandInput = document.getElementById('demandInput');
